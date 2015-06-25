@@ -739,10 +739,10 @@ class OSM(Network):
             for street_id in set(streets_to_remove):
                 for nid in self.ways.get(street_id).nids:
                     node = self.nodes.get(nid)
-                    for parent in node.way_ids:
-                        if not parent in streets_to_remove:
+                    for parent_id in node.way_ids:
+                        if not parent_id in streets_to_remove:
                             # FIXME
-                            # Find the nearest node on merged_street and add the other parent as a parent to it.
+                            # Find the nearest node on merged_street and add the other parent_id as a parent_id to it.
                             dist = 100
                             final_node = None
                             for merged_nid in merged_street.nids:
@@ -750,9 +750,9 @@ class OSM(Network):
                                 if dist > np.linalg.norm(merged_node.vector()-node.vector()):
                                     final_node = merged_node
                                     dist = np.linalg.norm(merged_node.vector()-node.vector())
-                                final_node.append_way(parent)
-                                pos = merged_street.nids.index(final_node.id)
-                                merged_street.nids.insert(pos, node)
+                            final_node.append_way(self.ways.get(parent_id))
+                            pos = merged_street.nids.index(final_node.id)
+                            merged_street.nids.insert(pos, node.id)
                             break
                 self.remove_way(street_id)
             self.simplify(merged_street.id, 0.1)

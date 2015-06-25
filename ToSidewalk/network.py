@@ -751,6 +751,8 @@ class OSM(Network):
                                     final_node = merged_node
                                     dist = np.linalg.norm(merged_node.vector()-node.vector())
                                 final_node.append_way(parent)
+                                pos = merged_street.nids.index(final_node.id)
+                                merged_street.nids.insert(pos, node)
                             break
                 self.remove_way(street_id)
             self.simplify(merged_street.id, 0.1)

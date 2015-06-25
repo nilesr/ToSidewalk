@@ -743,14 +743,13 @@ class OSM(Network):
                         if not parent in streets_to_remove:
                             # FIXME
                             # Find the nearest node on merged_street and add the other parent as a parent to it.
-                            # Psuedocode
                             dist = 100
                             final_node = None
                             for merged_nid in merged_street.nids:
                                 merged_node = self.nodes.get(merged_nid)
-                                if dist > merged_node.vector_to(node).distance:
+                                if dist > np.linalg.norm(merged_node.vector()-node.vector()):
                                     final_node = merged_node
-                                    dist = merged_node.vector_to(node).distance
+                                    dist = np.linalg.norm(merged_node.vector()-node.vector())
                                 final_node.append_way(parent)
                             break
                 self.remove_way(street_id)

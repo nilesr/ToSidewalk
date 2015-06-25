@@ -587,10 +587,10 @@ class OSM(Network):
         # Expand streets into rectangles, then find intersections between them.
         # http://gis.stackexchange.com/questions/90055/how-to-find-if-two-polygons-intersect-in-python
         """
-        streets_to_remove = []
 
         # Merge parallel pairs
         for pair in parallel_pairs:
+            streets_to_remove = []
             street_pair = (self.ways.get(pair[0]), self.ways.get(pair[1]))
 
             # First find parts of the street pairs that you want to merge (you don't want to merge entire streets
@@ -666,8 +666,6 @@ class OSM(Network):
 
             merged_street = Street(None, new_street_nids)
             merged_street.distance_to_sidewalk *= 2
-            self.add_way(merged_street)
-            self.simplify(merged_street.id, 0.1)
             streets_to_remove.append(street_pair[0].id)
             streets_to_remove.append(street_pair[1].id)
 
@@ -737,14 +735,18 @@ class OSM(Network):
                     s = Street(None, street2_segment[2])
                     self.add_way(s)
 
-        for street_id in set(streets_to_remove):
-            for nid in self.ways.get(street_id).nids:
-                node = self.nodes.get(nid)
-                for parent in node.way_ids:
-                    if not parent in streets_to_remove:
-                        # FIXME Add the node to the way we're about to add
-                        pass
-            self.remove_way(street_id)
+            self.add_way(merged_street)
+            for street_id in set(streets_to_remove):
+                for nid in self.ways.get(street_id).nids:
+                    node = self.nodes.get(nid)
+                    for parent in node.way_ids:
+                        if not parent in streets_to_remove:
+                            # FIXME Add the node to the way we're about to add
+                            #merged_street.nids.append(nid)
+                            node.append_way(merged_street) # This shouldn't work
+                            break
+                self.remove_way(street_id)
+            self.simplify(merged_street.id, 0.1)
         return
 
     def simplify(self, way_id, threshold=0.5):

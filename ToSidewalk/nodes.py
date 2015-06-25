@@ -6,7 +6,6 @@ import logging as log
 
 class Node(LatLng):
     def __init__(self, nid=None, lat=None, lng=None):
-        # self.latlng = latlng  # Note: Would it be cleaner to inherit LatLng?
         super(Node, self).__init__(lat, lng)
 
         if nid is None:

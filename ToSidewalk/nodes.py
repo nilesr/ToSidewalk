@@ -60,7 +60,7 @@ class Node(LatLng):
             return list(set(self.way_ids) & set(other.get_way_ids()))
 
     def get_sidewalk_nodes(self, wid):
-        return self.sidewalk_nodes[wid]
+    	return self.sidewalk_nodes[wid][-2:]
 
     def has_sidewalk_nodes(self):
         return len(self.sidewalk_nodes) > 0

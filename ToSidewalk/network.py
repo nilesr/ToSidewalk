@@ -741,7 +741,7 @@ class OSM(Network):
                     node = self.nodes.get(nid)
                     for parent_id in node.way_ids:
                         if not parent_id in streets_to_remove:
-                            # FIXME
+                            # FIXME 
                             # Find the nearest node on merged_street and add the other parent_id as a parent_id to it.
                             dist = 100
                             final_node = None
@@ -756,6 +756,7 @@ class OSM(Network):
                             break
                 self.remove_way(street_id)
             self.simplify(merged_street.id, 0.1)
+            print merged_street.export()
         return
 
     def simplify(self, way_id, threshold=0.5):

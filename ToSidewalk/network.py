@@ -757,6 +757,16 @@ class OSM(Network):
                             #pos = merged_street.nids.index(final_node.id)
                             #merged_street.nids.insert(pos, node.id)
                             node2 = parent.nids[parent.nids.index(nid) + 1]
+                            x, y = node.vector()
+                            x2, y2 = final_node.vector()
+                            slopea = (node.vector()[1] - node.vector()[0])/(node2.vector()[1] - node2.vector()[0])
+                            slopeb = (final_node.vector()[1] - final_node.vector()[0])/(final_node2.vector()[1] - final_node2.vector()[0])
+                            # fx = (-ya + yb + sxa - sbxb) / (s - sb)
+                            fx = (-y + y2 + (slope * x) - (slope2 * x2)) / (slope - slope2)
+                            fy = slope * (fx - x) + y
+                            n = Node(None, fx, fy)
+                            self.add_node(n)
+                            merged_street.add_node(n)
                             break
                 self.remove_way(street_id)
         #print self.export()

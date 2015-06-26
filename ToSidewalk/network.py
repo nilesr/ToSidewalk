@@ -736,27 +736,30 @@ class OSM(Network):
                     self.add_way(s)
 
             self.add_way(merged_street)
+            self.simplify(merged_street.id, 0.1)
             for street_id in set(streets_to_remove):
                 for nid in self.ways.get(street_id).nids:
                     node = self.nodes.get(nid)
                     for parent_id in node.way_ids:
                         if not parent_id in streets_to_remove:
                             # FIXME 
-                            # Find the nearest node on merged_street and add the other parent_id as a parent_id to it.
-                            dist = 100
-                            final_node = None
+                            parent = self.ways.get(parent_id)
+                            dist = dist2 = 100
+                            final_node = final_node2 = None
                             for merged_nid in merged_street.nids:
                                 merged_node = self.nodes.get(merged_nid)
                                 if dist > np.linalg.norm(merged_node.vector()-node.vector()):
+                                    final_node2 = final_node
                                     final_node = merged_node
+                                    dist2 = dist
                                     dist = np.linalg.norm(merged_node.vector()-node.vector())
-                            final_node.append_way(self.ways.get(parent_id))
-                            pos = merged_street.nids.index(final_node.id)
-                            merged_street.nids.insert(pos, node.id)
+                            #final_node.append_way(self.ways.get(parent_id))
+                            #pos = merged_street.nids.index(final_node.id)
+                            #merged_street.nids.insert(pos, node.id)
+                            node2 = parent.nids[parent.nids.index(nid) + 1]
                             break
                 self.remove_way(street_id)
-            self.simplify(merged_street.id, 0.1)
-            print merged_street.export()
+        #print self.export()
         return
 
     def simplify(self, way_id, threshold=0.5):
